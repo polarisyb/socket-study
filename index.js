@@ -11,53 +11,22 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-// namespace 설정
-// namespace 설정 시 index.html script 태그 내 socket io 매개변수로 /my-namespace 를 받아야 함. 
-let nsp = io.of('/my-namespace');
-nsp.on('connection', socket => {
-  console.log('someone connected');
-  nsp.emit('hi', 'hello everyone!');
-});
-
-// 웹 소켓 연결 시
-io.on('connection', socket => {
-  console.log('a user connected');
-  
-  let clients = 0;
-  clients++;
-  io.sockets.emit('broadcast', { description: clients + ' clients connected!'});
-
-  // 클라이언트로부터 메세지 수신
-  socket.on('chat message', msg => {
-    console.log('message: ' + msg);
-    socket.emit('chat message', msg);
-  });
-  
-  // 연결 종료 시 - 브라우저 새로 고침시 client disconnected 문구 다음 a user connected 문구 출력
-  socket.on('disconnect', () => {
-    console.log('client disconnected');
-
-    clients--;
-    io.sockets.emit('broadcast', { description: clients + ' clients connected!'});
-  });
-
-  // 에러 시
-  socket.on('error', error => {
-    console.error(error);
-  });
-
-  // 클라이언트에서 보낸 이벤트를 받았을 때
-  socket.on('clientEvent', (data) => {
-    console.log(data)
-  });
-
-  io.sockets.emit('broadcast', { description: clients + ' clients connected!'});
-
-  // let roomno = 1;
-  // socket.join("room-"+roomno);
-  // // room 내에 있는 모두에게 이 이벤트를 보냄
-  // io.sockets.in("room-"+roomno).emit('connectToRoom', "You are in room no. "+roomno);
-
+users = [];
+io.on('connection', function(socket){
+   console.log('A user connected');
+   socket.on('setUsername', function(data){
+      console.log(data);
+      if(users.indexOf(data) > -1){
+         socket.emit('userExists', data + ' username is taken! Try some other username.');
+      } else {
+         users.push(data);
+         socket.emit('userSet', {username: data});
+      }
+   });
+   socket.on('msg', function(data){
+      //Send message to everyone
+      io.sockets.emit('newmsg', data);
+   })
 });
 
 // io.emit('some event', { someProperty: 'some value', otherProperty: 'other value' }); // This will emit the event to all connected sockets

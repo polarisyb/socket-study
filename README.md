@@ -1,5 +1,3 @@
-# socket-study
-
 # socket.emit()
 https://youtu.be/5Wkv9BSegN0
 

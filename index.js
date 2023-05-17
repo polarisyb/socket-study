@@ -46,14 +46,17 @@ io.on('connection', function(socket){
    // data 인자로 개체의 랜덤 좌표를 받는다.
    socket.on('crazyIsClicked', data => {
       // 송신자를 포함한 연결된 모든 사용자에게 이벤트를 전달한다.
-      // io.emit('crazyIsClicked', data);
+      io.emit('crazyIsClicked', data);
 
       // 송신자에게만 이벤트 전달
-      socket.emit('crazyIsClicked', data);
+      // socket.emit('crazyIsClicked', data);
 
       // 송신자를 제외한 연결된 모든 사용자에게 이벤트 전달
       // socket.broadcast.emit('crazyIsClicked', data);
+      
+      console.log(data);
    });
+
 });
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

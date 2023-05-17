@@ -27,6 +27,7 @@ document.addEventListener("mousemove", event => {
   if (isDragging) {
     crazyButton.style.left = (event.clientX - dragOffset.x) + "px";
     crazyButton.style.top = (event.clientY - dragOffset.y) + "px";
+    console.log("Element Position: left=" + crazyButton.style.left + ", top=" + crazyButton.style.top);
   };
 });
 
@@ -68,19 +69,19 @@ homeBtn.addEventListener('click', () => {
 });
 
 // crazyButton 클릭시 crazyIsClicked 이벤트를 전달하고 data로 offsetLeft, offsetTop 을 전달
-crazyButton.addEventListener('click', () => {
-  // 송신자에게만 이벤트를 전달
-  socket.emit('crazyIsClicked', {
-    offsetLeft: Math.random() * ((window.innerWidth - crazyButton.clientWidth) - 200),
-    offsetTop: Math.random() * ((window.innerHeight - crazyButton.clientHeight) - 100)
-  });
-});
+// crazyButton.addEventListener('click', () => {
+//   // 송신자에게만 이벤트를 전달
+//   socket.emit('crazyIsClicked', {
+//     offsetLeft: Math.random() * ((window.innerWidth - crazyButton.clientWidth) - 200),
+//     offsetTop: Math.random() * ((window.innerHeight - crazyButton.clientHeight) - 100)
+//   });
+// });
 
 // index.js 에서 crazyIsClicked 이벤트를 전달받고 data로 전달받은 offsetLeft, offsetTop 값으로 개체의 x축 좌표 값과 y축 좌표 값을 설정
-socket.on('crazyIsClicked', data => {
-  goCrazy(data.offsetLeft, data.offsetTop);
-  console.log(data);
-});
+// socket.on('crazyIsClicked', data => {
+//   goCrazy(data.offsetLeft, data.offsetTop);
+//   console.log(data);
+// });
 
 // // index.js 에서 Game start! 이벤트를 전달받고 hideStartButton 함수를 실행
 // socket.on('Game start!', () => {

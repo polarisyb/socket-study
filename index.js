@@ -37,9 +37,12 @@ io.on('connection', function(socket){
 
    // app.js 의 crazyIsClicked 이벤트 수신 시 - 개체 클릭 시 동작
    // data 인자로 개체의 랜덤 좌표를 받는다.
-   // 그리고 이를 송신자를 제외한 서버에 접속해 있는 모든 사용자에게 전달한다.
    socket.on('crazyIsClicked', data => {
-      io.emit('crazyIsClicked', data);
+      // 송신자를 제외한 서버에 접속해 있는 모든 사용자에게 이벤트를 전달한다.
+      // io.emit('crazyIsClicked', data);
+
+      // 송신자에게만 이벤트 전달
+      socket.emit('crazyIsClicked', data);
    });
 });
 

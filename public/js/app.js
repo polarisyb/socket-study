@@ -59,3 +59,13 @@ socket.on('crazyIsClicked', data => {
   goCrazy(data.offsetLeft, data.offsetTop);
   console.log(data);
 });
+
+// // index.js 에서 Game start! 이벤트를 전달받고 hideStartButton 함수를 실행
+// socket.on('Game start!', () => {
+//   hideStartButton();
+// });
+
+// // // index.js 에서 Game over! 이벤트를 전달받고 showStartButton 함수를 실행
+// socket.on('Game over!', () => {
+//   showStartButton();
+// });

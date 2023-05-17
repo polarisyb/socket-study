@@ -25,8 +25,11 @@ io.on('connection', function(socket){
    // app.js 의 startGame 이벤트 수신 시 - startGame 버튼 클릭 시 동작 
    socket.on('startGame', () => {
       console.log('Game started');
-      // 자신을 포함한 모든 사용자에게 메세지가 전송된다.
+      
+      // 송신자에게만 이벤트 전달
       socket.emit('Game start!');
+
+      // 자신을 포함한 모든 사용자에게 메세지가 전송된다.
       // io.sockets.emit('Game start!');
    });
 
@@ -34,6 +37,9 @@ io.on('connection', function(socket){
    // 그리고 이를 송신자를 제외한 모든 사용자에게 전달한다.
    socket.on('home', () => {
       console.log('home button pressed');
+
+      // 자신을 포함한 모든 사용자에게 메세지가 전송된다.
+      // io.sockets.emit('Game over!');
    });
 
    // app.js 의 crazyIsClicked 이벤트 수신 시 - 개체 클릭 시 동작
@@ -43,10 +49,10 @@ io.on('connection', function(socket){
       // io.emit('crazyIsClicked', data);
 
       // 송신자에게만 이벤트 전달
-      // socket.emit('crazyIsClicked', data);
+      socket.emit('crazyIsClicked', data);
 
       // 송신자를 제외한 연결된 모든 사용자에게 이벤트 전달
-      socket.broadcast.emit('crazyIsClicked', data);
+      // socket.broadcast.emit('crazyIsClicked', data);
    });
 });
 

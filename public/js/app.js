@@ -5,6 +5,31 @@ const startButton = document.getElementById('startButton');
 const startingSection = document.querySelector('.starting-section');
 const homeBtn = document.querySelector('.home-btn');
 
+// 마우스 드래그 이동 
+let isDragging = false;
+let dragOffset = { x: 0, y: 0 };
+
+// mousedown 이벤트가 발생했을 때 드래그 상태를 활성화하고
+// 현재 마우스의 위치와 엘리먼트의 위치 간의 차이를 계산하여 dragOffeset을 설정
+crazyButton.addEventListener("mousedown", event => {
+  isDragging = true;
+  dragOffset.x = event.clientX - crazyButton.offsetLeft;
+  dragOffset.y = event.clientY - crazyButton.offsetTop;
+});
+
+// mouseup 이벤트가 발생하면 드래그 상태를 비활성화 
+document.addEventListener("mouseup", () => {
+  isDragging = false;
+});
+
+// mousemove 이벤트가 발생하면 드래그 중일 때에만 엘리먼트의 위치를 업데이트하여 드래그 효과 구현
+document.addEventListener("mousemove", event => {
+  if (isDragging) {
+    crazyButton.style.left = (event.clientX - dragOffset.x) + "px";
+    crazyButton.style.top = (event.clientY - dragOffset.y) + "px";
+  };
+});
+
 // Start 버튼을 숨기는 함수
 const hideStartButton = () => {
   startButton.style.display = 'none';
@@ -21,14 +46,11 @@ const showStartButton = () => {
 
 // crazyButton 개체의 top, left, animation 스타일을 담은 함수 
 const goCrazy = (offLeft, offTop) => {
-  let top, left;
-
-  left = offLeft;
-  top = offTop;
+  let top = offTop;
+  let left = offLeft;
 
   crazyButton.style.top = top + 'px';
   crazyButton.style.left = left + 'px';
-  crazyButton.style.animation = "none";
 };
 
 // startButton 클릭시 startGame 이벤트를 전달하고  hideStartButton 함수를 작동

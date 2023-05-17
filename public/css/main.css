@@ -24,7 +24,7 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  /* transition 을 주면 버벅이는 느낌 */
+
   /* transition: 0.1s ease all; */
   transform:translate(-50%,-50%);
 

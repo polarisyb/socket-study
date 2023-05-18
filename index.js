@@ -22,12 +22,19 @@ app.get('/remote', (req, res) => {
 
 // 웹 소켓 연결 시
 io.on('connection', socket => {
-   console.log('A user connected');
+  console.log('A user connected');
+
+  let x = 0;
+  socket.on('move', data => {
+    console.log(x +' '+ data);
+    x++;
+    io.emit('move', data);
+  });
 
    // 연결 종료 시 - 새로고침시 disconnected 문구와 A use connected 문구가 차례로 출력
-   socket.on('disconnect', () => {
-      console.log('disconnected');
-   });
+  socket.on('disconnect', () => {
+    console.log('disconnected');
+  });
 
 });
 

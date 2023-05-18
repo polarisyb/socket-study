@@ -34,5 +34,3 @@ let myGameArea = {
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
   }
 }
-
-deg = 0;

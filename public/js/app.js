@@ -27,7 +27,7 @@ document.addEventListener("mousemove", event => {
   if (isDragging) {
     crazyButton.style.left = (event.clientX - dragOffset.x) + "px";
     crazyButton.style.top = (event.clientY - dragOffset.y) + "px";
-    console.log("Element Position: left=" + crazyButton.style.left + ", top=" + crazyButton.style.top);
+    socket.emit("mouseMove", { x: event.clientX, y: event.clientY });
   };
 });
 
@@ -46,13 +46,13 @@ const showStartButton = () => {
 };
 
 // crazyButton 개체의 top, left, animation 스타일을 담은 함수 
-const goCrazy = (offLeft, offTop) => {
-  let top = offTop;
-  let left = offLeft;
+// const goCrazy = (offLeft, offTop) => {
+//   let top = offTop;
+//   let left = offLeft;
 
-  crazyButton.style.top = top + 'px';
-  crazyButton.style.left = left + 'px';
-};
+//   crazyButton.style.top = top + 'px';
+//   crazyButton.style.left = left + 'px';
+// };
 
 // startButton 클릭시 startGame 이벤트를 전달하고  hideStartButton 함수를 작동
 startButton.addEventListener('click' , () => {
@@ -66,6 +66,14 @@ homeBtn.addEventListener('click', () => {
   // 송신자에게만 이벤트를 전달
   socket.emit('home');
   showStartButton();
+});
+
+socket.on('mouseMove', data => {
+  // console.log('서버로부터 마우스 좌표 데이터 수신:', data);
+
+  let crazyButton = document.getElementById('crazyButton');
+  crazyButton.style.top = data.y + "px";
+  crazyButton.style.left = data.x + "px";
 });
 
 // crazyButton 클릭시 crazyIsClicked 이벤트를 전달하고 data로 offsetLeft, offsetTop 을 전달

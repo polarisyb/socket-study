@@ -8,6 +8,9 @@ const io = require('socket.io')(server);
 // const io = new Server(server);
 const PORT = process.env.PORT || 8000;
 
+// app.use(path, callback)
+// path: 미들웨어 함수가 호출되는 경로. 경로, 경로패턴 또는 경로와 일치하는 정규식 패턴을 나타내는 문자열이 올 수 있다. 
+// callback: 미들웨어 함수 또는 미들웨어 함수의 시리즈/배열
 app.use(express.static('public'));
 
 // localhost:8000으로 서버에 접속하면 클라이언트로 index.html을 전송한다.

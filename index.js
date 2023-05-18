@@ -12,11 +12,15 @@ app.use(express.static('public'));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname + '/index.html'));
-  console.log('index 페이지 입니다.');
 });
 
 io.on('connection', socket => {
-  console.log('A user connected');
+  console.log('a user connected');
+
+  socket.on('chat message', msg => {
+    
+    io.emit('chat message', msg);
+  });
 
   socket.on('disconnect', () => {
     console.log('disconnected');

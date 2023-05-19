@@ -21,13 +21,22 @@ app.get('/', (req, res) => {
 
 // connection 이 수립되면 event handler function의 인자로 socket이 들어온다.
 io.on('connection', socket => {
-  // console.log(socket.handshake);
-  // console.log(socket.nsp);
-  // console.log(socket.id);
-  // console.log(socket.client.id);
+  // socket.onAny() 메서드는 모든 소켓 이벤트에 대해 리스닝 하고, 이벤트가 발생할 때 마다 콜백 함수를 실행한다.
+  // 콜백 함수에서는 각 이벤트의 이름을 출력하도록 했음.
+  //  즉 이 코드는 소켓에서 발생하는 모든 이벤트를 콘솔에 출력.
+  socket.onAny( e => {
+    console.log(`Socket Event: ${e}`);
+  });
+
+  // room 237에 입장
+  socket.join('room 237');
+  console.log(socket.rooms);
+  // room 237에 있는 모든 사용자에게 이벤트 송신 
+  io.to("room 237").emit("a new user has joined the room");
 
   // 접속한 클라이언트의 정보가 수신되면
   socket.on('login', data => {
+    // console.log(data);
     console.log('Client logged-in:\n name:' + data.name + '\n userid: ' + data.userid);
 
     // socket에 클라이언트 정보를 저장한다
@@ -72,6 +81,7 @@ io.on('connection', socket => {
     socket.disconnect();
   })
 
+  // 소켓 연결이 끊어지면 disconnect 이벤트가 자동으로 트리거된다
   socket.on('disconnect', () => {
     console.log('user disconnected: ' + socket.name);
   });

@@ -76,7 +76,7 @@ io.on('connection', socket => {
     }, 2000);
   });
 
-  // force client disconnect from server
+  // 서버로부터 클라이언트와의 연결을 강제 종료합니다.
   socket.on('forceDisconnect', ()  => {
     socket.disconnect();
   })

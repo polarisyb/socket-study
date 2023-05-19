@@ -21,6 +21,8 @@ app.get('/', (req, res) => {
 
 // connection 이 수립되면 event handler function의 인자로 socket이 들어온다.
 io.on('connection', socket => {
+  // console.log(socket.handshake);
+  // console.log(socket.nsp);
   // 접속한 클라이언트의 정보가 수신되면
   socket.on('login', data => {
     console.log('Client logged-in:\n name:' + data.name + '\n userid: ' + data.userid);
@@ -34,7 +36,7 @@ io.on('connection', socket => {
   });
 
   // 클라이언트로부터의 메시지가 수신되면
-  socket.on('chat', data => {
+  socket.on('chat', (data, done) => {
     console.log('Message from %s: %s', socket.name, data.msg);
 
     let msg = {
@@ -56,6 +58,10 @@ io.on('connection', socket => {
 
     // 특정 클라이언트에게만 메시지를 전송한다
     // io.to(id).emit('chat', msg);
+
+    // setTimeout(() => {
+    //   done();
+    // }, 2000);
   });
 
   // force client disconnect from server

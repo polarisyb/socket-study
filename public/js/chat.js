@@ -49,5 +49,11 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.emit("chat", { msg: msgForm.value }, backendDone);
     msgForm.value = "";
   });
+
+  // 서버로부터 'a new user has joined the room 이벤트 수신
+  socket.on('a new user has joined the room' , () => {
+    console.log('a new user has joined the room');
+  });
+
   
 });

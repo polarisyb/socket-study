@@ -41,7 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let msgForm = document.getElementById("msgForm");
 
     // 서버로 메시지를 전송한다.
-    socket.emit("chat", { msg: msgForm.value });
+    socket.emit("chat", { msg: msgForm.value }, () => {
+      // console.log('서버로 메시지를 전송했습니다');
+    });
     msgForm.value = "";
   });
   

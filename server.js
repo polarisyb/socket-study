@@ -62,9 +62,9 @@ io.on('connection', socket => {
     // 특정 클라이언트에게만 메시지를 전송한다
     // io.to(id).emit('chat', msg);
 
-    // setTimeout(() => {
-    //   done();
-    // }, 2000);
+    setTimeout(() => {
+      done(data);
+    }, 2000);
   });
 
   // force client disconnect from server

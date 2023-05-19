@@ -34,6 +34,11 @@ document.addEventListener("DOMContentLoaded", () => {
     chatLogs.appendChild(newMessage);
   });
 
+  
+  const backendDone = msg => {
+    console.log('The backend says: ', msg);
+  }
+
   // 폼 제출 이벤트 핸들러
   let form = document.querySelector("form");
   form.addEventListener("submit", e => {
@@ -41,9 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let msgForm = document.getElementById("msgForm");
 
     // 서버로 메시지를 전송한다.
-    socket.emit("chat", { msg: msgForm.value }, () => {
-      // console.log('서버로 메시지를 전송했습니다');
-    });
+    socket.emit("chat", { msg: msgForm.value }, backendDone);
     msgForm.value = "";
   });
   

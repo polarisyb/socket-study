@@ -23,6 +23,9 @@ app.get('/', (req, res) => {
 io.on('connection', socket => {
   // console.log(socket.handshake);
   // console.log(socket.nsp);
+  // console.log(socket.id);
+  // console.log(socket.client.id);
+
   // 접속한 클라이언트의 정보가 수신되면
   socket.on('login', data => {
     console.log('Client logged-in:\n name:' + data.name + '\n userid: ' + data.userid);

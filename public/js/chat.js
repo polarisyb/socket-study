@@ -1,59 +1,44 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // 소켓 서버에 연결한다
-  let socket = io();
+const socket = io();
 
-  // 알파벳 소문자로 이루어진 세 글자의 임의의 이름을 생성하여 반환하는 함수
-  const makeRandomName = () => {
-    let name = "";
-    let possible = "abcdefghijklmnopqrstuvwxyz";
-    for (let i = 0; i < 3; i++) {
-      name += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return name;
+const chatForm = document.getElementById('chat-form');
+
+
+const outputMessage = () => {
+  const div = document.createElement('div');
+  div.classList.add('message');
+  div.innerHTML = `
+
+  `;
+};
+
+socket.on('message', message => {
+  console.log(message);
+  outputMessage(message);
+});
+
+
+
+chatForm.addEventListener('submit', e => {
+  // 폼이 제출되었을 때 페이지가 다시 로드 되지 않고 js 코드에서 추가적인 작업 수행
+  e.preventDefault();
+
+  // message text를 가져온다
+  // e.target은 이벤트가 발생한 요소 'chatFrom' 요소를 참조
+  // elements 속성을 통해 폼 요소에 접근
+  // msg는 name 속성이 msg 인 폼 요소의 값을 가져옴
+  const msg = e.target.elements.msg.value;
+  // console.log(msg);
+
+  // 서버로 chatMessage 이벤트와 함께 msg 데이터를 송신한다.
+  socket.emit('chatMessage', msg);
+});
+
+
+document.getElementById('leave-btn').addEventListener('click', err => {
+  const leaveRoom = confirm('정말 채팅방을 나가시겠습니까?');
+  if (leaveRoom) {
+    window.location = '/index.html';
+  } else {
+    throw err;
   };
-
-  // 서버로 자신의 정보를 전송한다.
-  socket.emit("login", {
-    name: makeRandomName(),
-    userid: "polaris@acrosspace.com"
-  });
-
-  // 서버로부터의 메시지가 수신되면
-  socket.on("login", data => {
-    let chatLogs = document.getElementById("chatLogs");
-    let newMessage = document.createElement("div");
-    newMessage.innerHTML = "<strong>" + data + "</strong> has joined";
-    chatLogs.appendChild(newMessage);
-  });
-
-  // 서버로부터의 메시지가 수신되면
-  socket.on("chat", data => {
-    let chatLogs = document.getElementById("chatLogs");
-    let newMessage = document.createElement("div");
-    newMessage.innerHTML = data.msg + " : from <strong>" + data.from.name + "</strong>";
-    chatLogs.appendChild(newMessage);
-  });
-
-  
-  const backendDone = msg => {
-    console.log('The backend says: ', msg);
-  }
-
-  // 폼 제출 이벤트 핸들러
-  let form = document.querySelector("form");
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    let msgForm = document.getElementById("msgForm");
-
-    // 서버로 메시지를 전송한다.
-    socket.emit("chat", { msg: msgForm.value }, backendDone);
-    msgForm.value = "";
-  });
-
-  // 서버로부터 'a new user has joined the room 이벤트 수신
-  socket.on('a new user has joined the room' , () => {
-    console.log('a new user has joined the room');
-  });
-
-  
 });

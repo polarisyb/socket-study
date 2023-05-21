@@ -1,22 +1,38 @@
 const socket = io();
 
 const chatForm = document.getElementById('chat-form');
+const chatMessages = document.querySelector('.chat-messages');
 
 
-const outputMessage = () => {
+const outputMessage = message => {
+  let now = new Date();  // 현재시간
+  let month = (now.getMonth() + 1);  // 월 
+  let date = now.getDate(); // 일
+  let day = now.getDay();  // 요일
+  let week = ['일', '월', '화', '수', '목', '금', '토'];
+  let hours = now.getHours();
+  let minutes = now.getMinutes();
+
   const div = document.createElement('div');
   div.classList.add('message');
   div.innerHTML = `
-
+    <p class="meta">Brad
+      <span>
+        ${month}월 ${date}일 ${week[day]}요일 ${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes }`  : minutes }
+      </span>
+    </p>
+    <p class="text">
+      ${message}
+    </p>
   `;
+  document.querySelector('.chat-messages').appendChild(div);
 };
 
 socket.on('message', message => {
-  console.log(message);
+  // console.log(message);
   outputMessage(message);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
 });
-
-
 
 chatForm.addEventListener('submit', e => {
   // 폼이 제출되었을 때 페이지가 다시 로드 되지 않고 js 코드에서 추가적인 작업 수행

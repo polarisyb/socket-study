@@ -61,8 +61,7 @@ io.on('connection', socket => {
   });
   
   // 클라이언트가 연결이 끊어졌을 때 실행
-  // message 이벤트를 내보내서 room 의 다른 사용자에게 알리고
-  // 'roomUsers' 이벤트를 내보내 룸의 사용자 목록을 업데이트 한다.
+  // 소켓 연결이 끊긴 사용자를 식별하고, 해당 사용자가 속한 채팅방에 메시지를 전송, 사용자 목록 업데이트
   socket.on('disconnect', () => {
     const user = userLeave(socket.id);
 

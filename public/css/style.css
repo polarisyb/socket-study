@@ -60,11 +60,12 @@ a {
 	color: #fff;
 	padding: 20px 20px 60px;
 	overflow-y: scroll;
+	color: #000;
+
 }
 
 .chat-sidebar h2 {
 	font-size: 20px;
-	background: rgba(0, 0, 0, 0.1);
 	padding: 10px;
 	margin-bottom: 20px;
 }

@@ -4,6 +4,7 @@ import MyForm from './components/MyForm';
 import Events from './components/Events';
 import ConnectionManager from './components/ConnectionManager';
 import ConnectionState from './components/ConnectionState';
+import JoinRoom from './components/JoinRoom';
 
 
 const App = () => {
@@ -52,6 +53,7 @@ const App = () => {
   return (
     <div className="App">
       <ConnectionState isConnected={ isConnected } />
+      <JoinRoom />
       <Events events={ fooEvents } />
       <ConnectionManager />
       <MyForm />

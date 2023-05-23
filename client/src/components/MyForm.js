@@ -18,6 +18,7 @@ const MyForm = () => {
 
     socket.timeout(1000).emit('sendMessage', value, () => {
       setIsLoading(false);
+      console.log(`${socket.id} send to message : ${value}`);
     });
   };
 

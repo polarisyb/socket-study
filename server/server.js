@@ -19,21 +19,25 @@ io.on('connection', socket => {
     console.log(`Socket Event: ${e}`);
   });
 
-  console.log(`User Connected: ${socket.id}`);
+  io.emit('joinMessage', `${socket.id} has joined the chat`);
 
+  // room에 입장했을 때
   socket.on('joinRoom', data => {
     socket.join(data);
-    console.log(socket.rooms);
+    console.log(`${socket.id} has joined the ${data}`)
+    socket.broadcast.to(data).emit('message', `${socket.id} has joined the ${data}`);
   });
 
-  socket.on('sendMessage', value => {
-    console.log(`${socket.id} send to message : ${value}`);
+  // MyForm 으로 부터 sendMessage 이벤트를 받았을 때
+  socket.on('sendMessage', msg => {
+    io.emit('message', msg);
+    console.log(`${socket.id} send to message : ${msg}`);
   });
 
   socket.emit('foo', ['Hello from the server'] );
 
   socket.on('disconnect', () => {
-    console.log('A user disconnected');
+    console.log(`User disconnected: ${socket.id}`);
   });
 });
 

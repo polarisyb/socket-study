@@ -25,6 +25,9 @@ io.on('connection', socket => {
     console.log(data);
   });
 
+  socket.emit('foo', ['Hello from the server'] );
+
+
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });

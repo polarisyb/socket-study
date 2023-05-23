@@ -9,7 +9,7 @@ const MyForm = () => {
     event.preventDefault();
     setIsLoading(true);
 
-    socket.timeout(5000).emit('create-something', value, () => {
+    socket.timeout(1000).emit('sendMessage', value, () => {
       setIsLoading(false);
     });
   };

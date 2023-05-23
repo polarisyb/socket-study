@@ -15,17 +15,15 @@ const io = require('socket.io')(server, {
 });
 
 io.on('connection', socket => {
+  socket.onAny( e => {
+    console.log(`Socket Event: ${e}`);
+  });
+
   console.log(`User Connected: ${socket.id}`);
 
-  socket.on('joinRoom', data => {
-    socket.join(data);
-  });
-
-  socket.on('sendMessage', data => {
+  socket.on('sendMessage', (data) => {
     console.log(data);
-    io.to(data.room).emit('receiveMessage', data);
   });
-
 
   socket.on('disconnect', () => {
     console.log('A user disconnected');

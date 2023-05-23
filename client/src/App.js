@@ -38,12 +38,17 @@ const App = () => {
     console.log(msg);
   };
 
+  const joinMessage = msg => {
+    console.log(msg);
+  };
+
   useEffect(() => {
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('foo', onFooEvent);
     socket.on('sendMessage', sendMessage);
     socket.on('message', message);
+    socket.on('joinMessage', joinMessage);
 
     return () => {
       // socket.off 이벤트 리스너 해제
@@ -52,6 +57,8 @@ const App = () => {
       socket.off('foo', onFooEvent);
       socket.off('sendMessage', sendMessage);
       socket.off('message', message);
+      socket.off('joinMessage', joinMessage);
+
     };
     // 의존성 배열이 비어있다면 ([]), useEffect의 첫번째 인자로 전달된 함수는 컴포넌트가 처음 마운트 될 때만 실행된다.
   }, []);

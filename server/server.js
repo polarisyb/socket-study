@@ -19,6 +19,7 @@ io.on('connection', socket => {
     console.log(`Socket Event: ${e}`);
   });
 
+  console.log(`User connected: ${socket.id}`);
   io.emit('joinMessage', `${socket.id} has joined the chat`);
 
   // room에 입장했을 때

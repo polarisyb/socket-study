@@ -16,17 +16,42 @@ const run = async () => {
     console.log("Connected to MongoDB");
 
     // 데이터베이스 및 컬렉션을 가져온다.
-    const db = client.db("sample_guides");
-    const coll = db.collection("planets");
+    const db = client.db("test");
+    const coll = db.collection("testtest");
 
-    // find() 메서드를 사용하여 컬렉션의 모든 문서를 검색 ('planets)
-    const cursor = coll.find();
+    const docs = [
+      {name: "Halley's Comet", officialName: "1P/Halley", orbitalPeriod: 75, radius: 3.4175, mass: 2.2e14},
+      {name: "Wild2", officialName: "81P/Wild", orbitalPeriod: 6.41, radius: 1.5534, mass: 2.3e13},
+      {name: "Comet Hyakutake", officialName: "C/1996 B2", orbitalPeriod: 17000, radius: 0.77671, mass: 8.8e12},
+      {name: "Ct Hyakutake", officialName: "C/196 B2", orbitalPeriod: 1000, radius: 0.7771, mass: 8.8e2},
+      {name: "Comet Hyaake", officialName: "C/199 B2", orbitalPeriod: 1700, radius: 0.7671, mass: 8.e2},
+    ];
 
-    // cursor.forEach() 비동기적인 메서드, MongoDB의 문서를 처리하기 위해 사용
-    // 동기적, 배열의 각 요소 처리를 위한 javascript Array.prototype.forEach()와는 차이가 있다.
-    await cursor.forEach((document) => {
-      console.log(document);
-    });
+    // planets 컬렉션에 name 필드에 대한 Unique Index를 생성, name 필드는 고유한 값을 가지게 된다.
+    await coll.createIndex({ name: 1 }, { unique: true });
+
+    // inserMany 메서드에 전달할 옵션을 설정.
+    // ordered: false 중복 데이터가 발견되어도 오류를 발생시키지 않고 나머지 문서를 계속 삽입하도록 설정
+    // 이를 통해 중복된 데이터가 있는 경우에도 오류가 발생하지 않고 나머지 문서가 삽입된다.
+    const options = { ordered: false };
+
+    // 위에서 생성한 컬렉션에 'docs' 배열에 있는 문서들을 'insertMany' 메서드를 사용하여 삽입
+    // options 옵션을 함께 전달하여 중복 데이터가 발견되어도 오류를 발생시키지 않고 나머지 문서를 삽입
+    // result 에는 삽입된 문서들의 정보가 담긴 객체가 반환된다.
+    const result = await coll.insertMany(docs, options);
+
+    // 삽입된 문서들의 '_id' 값을 출력
+    // result.insertedIds 는 삽입된 각 문서의 '_id'값을 가진 객체
+    // 이를 통해 어떤 문서들이 성공적으로 삽입되었는지 확인 가능
+    console.log(result.insertedIds);
+
+    // find() 메서드를 사용하여 컬렉션에서 모든 문서를 검색
+    // const cursor = coll.find();
+
+    // await cursor.forEach((document) => {
+    //   console.log(document);
+    // });
+
   } catch (err) {
     console.error("Error:", err);
   } finally {

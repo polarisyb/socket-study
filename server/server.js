@@ -15,22 +15,15 @@ const io = require('socket.io')(server, {
 });
 
 io.on('connection', socket => {
-  socket.onAny( e => {
-    console.log(`Socket Event: ${e}`);
+  socket.onAny( event => {
+    console.log(`Socket Event: ${event}`);
   });
 
   console.log(`User Connected: ${socket.id}`);
 
-  socket.on('joinRoom', data => {
-    socket.join(data);
-    console.log(socket.rooms);
-  });
-
   socket.on('sendMessage', value => {
     console.log(`${socket.id} send to message : ${value}`);
   });
-
-  socket.emit('foo', ['Hello from the server'] );
 
   socket.on('disconnect', () => {
     console.log('A user disconnected');

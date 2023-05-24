@@ -20,7 +20,7 @@ const client = new MongoClient(uri, {
   }
 });
 
-async function run() {
+const run = async () => {
   try {
 
     await client.connect();
@@ -61,7 +61,7 @@ async function run() {
     const data = await cursor.toArray();
     
     io.on('connection', socket => {
-      socket.emit('foodData', data);
+      socket.emit('document', data);
     });
 
     console.log('Data sent to clients');

@@ -24,7 +24,9 @@ const run = async () => {
 
     // cursor.forEach() 비동기적인 메서드, MongoDB의 문서를 처리하기 위해 사용
     // 동기적, 배열의 각 요소 처리를 위한 javascript Array.prototype.forEach()와는 차이가 있다.
-    await cursor.forEach(console.log);
+    await cursor.forEach((document) => {
+      console.log(document);
+    });
   } catch (err) {
     console.error("Error:", err);
   } finally {

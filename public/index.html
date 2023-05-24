@@ -11,25 +11,6 @@
   <ul id="documentList"></ul>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-
-    socket.on('foodData', data => {
-      const documentList = document.getElementById('documentList');
-
-      data.forEach(item => {
-        const listItem = document.createElement('li');
-        listItem.innerText = JSON.stringify(item);
-        console.log(item);
-        const keysArray = Object.keys(item);
-        const valuesArray = Object.values(item);
-        documentList.appendChild(listItem);
-        console.log(keysArray);
-        console.log(valuesArray);
-      });
-
-    });
-    
-  </script>
+  <script type="module" src="/js/index.js"></script>
 </body>
 </html>

@@ -16,4 +16,14 @@ const initializeSocket = documentList => {
   });
 };
 
-export default initializeSocket;
+const socketId = idList => {
+  
+  socket.on('message', data => {
+    const listData = document.createElement('li');
+    listData.innerText = data;
+    idList.appendChild(listData);
+    console.log(data);
+  });
+};
+
+export { initializeSocket, socketId };

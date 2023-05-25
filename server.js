@@ -29,7 +29,7 @@ const client = new MongoClient(uri, {
   }
 });
 
-// 단일 문서를 컬렉션에 삽입한다. 한 번에 하나의 문서만 삽입할 수 있다.
+//// 단일 문서를 컬렉션에 삽입한다. 한 번에 하나의 문서만 삽입할 수 있다.
 // const createListing = async (client, newListing) => {
 //   const result = await client.db('sample_airbnb').collection('listingAndReviews').insertOne(newListing);
 
@@ -37,13 +37,14 @@ const client = new MongoClient(uri, {
 // };
 
 // // 여러 개의 문서를 컬렉션에 삽입한다. 여러 개의 문서를 배열 형태로 전달하여 여러 개의 문서를 삽입할 수 있다.
-const createMultipleListing = async (client, newListings) => {
-  const result = await client.db('sample_airbnb').collection('listingAndReviews').insertMany(newListings);
+// const createMultipleListing = async (client, newListings) => {
+//   const result = await client.db('sample_airbnb').collection('listingAndReviews').insertMany(newListings);
 
-  console.log(`${result.insertedCount} new listings created with the following id(s):`);
-  console.log(result.insertedIds);
-};
+//   console.log(`${result.insertedCount} new listings created with the following id(s):`);
+//   console.log(result.insertedIds);
+// };
 
+// listDatabases() - 현재 MongoDB 서버에 있는 모든 데이터베이스 목록을 가져오는 함수
 const listDatabases = async client => {
   // db() MongoClient 객체에서 현재 연결된 데이터베이스에 대한 레퍼런스를 가져오는 메서드
   // MongoDB 데이터베이스와 상호작용하는 데 사용된다.
@@ -61,6 +62,18 @@ const listDatabases = async client => {
   });
 };
 
+// findOneListingByName() - findOne() 메서드를 호출하여 'name' 필드가 'nameOfListing'과 첫 번째로 일치하는 문서를 검색하여 출력하는 함수 
+const findOneListingByName = async (client, nameOfListing) => {
+  const result = await client.db('sample_airbnb').collection('listingAndReviews').findOne( {name:nameOfListing} );
+
+  if (result) {
+    console.log(`Found a listing in the collection with the name '${nameOfListing}'`);
+    console.log(result);
+  } else {
+    console.log(`No listings found with the name '${nameOfListing}'`);
+  };
+};
+
 const run = async () => {
   try {
 
@@ -69,11 +82,11 @@ const run = async () => {
     await client.db('admin').command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-    const db = client.db("sample_airbnb");
-    const coll = db.collection("listingAndReviews");
+    // const db = client.db("sample_airbnb");
+    // const coll = db.collection("listingAndReviews");
 
-    await coll.createIndex({ name: 1 }, { unique: true });
-    const options = { ordered: false };
+    // await coll.createIndex({ name: 1 }, { unique: true });
+    // const options = { ordered: false };
 
     // insertOne();
     // await createListing(client, {
@@ -83,42 +96,42 @@ const run = async () => {
     //   bedrooms: 2,
     //   bathrooms: 1
     // });
-
     // const insertOneResult = await coll.insertOne(createListing, options);
     // console.log(insertOneResult.insertedId);
 
-
     // insertMany();
-    await createMultipleListing(client, [
-      {
-        name: 'Infinite Views',
-        memo: 'Really? Infinity?',
-        property_type: 'House',
-        bedrooms: 5,
-        bathrooms: 4.5,
-        beds: 5
-      },
-      {
-        name: 'Private room in Space',
-        memo: 'Space? what??',
-        property_type: 'Space',
-        bedrooms: 1,
-        bathrooms: 1
-      },
-      {
-        name: 'Beautiful Beach House',
-        memo: 'Enjoy',
-        bedrooms: 4,
-        bathrooms: 2.5,
-        beds: 7,
-        last_review: new Date()
-      },
-    ]);
-    
-    const insertManyResult = await coll.insertMany(createMultipleListing, options);
-    console.log(insertManyResult.insertedIds);
+    // await createMultipleListing(client, [
+    //   {
+    //     name: 'Infinite Views',
+    //     memo: 'Really? Infinity?',
+    //     property_type: 'House',
+    //     bedrooms: 5,
+    //     bathrooms: 4.5,
+    //     beds: 5
+    //   },
+    //   {
+    //     name: 'Private room in Space',
+    //     memo: 'Space? what??',
+    //     property_type: 'Space',
+    //     bedrooms: 1,
+    //     bathrooms: 1
+    //   },
+    //   {
+    //     name: 'Beautiful Beach House',
+    //     memo: 'Enjoy',
+    //     bedrooms: 4,
+    //     bathrooms: 2.5,
+    //     beds: 7,
+    //     last_review: new Date()
+    //   },
+    // ]);
+    // const insertManyResult = await coll.insertMany(createMultipleListing, options);
+    // console.log(insertManyResult.insertedIds);
 
     await listDatabases(client);
+
+    await findOneListingByName(client, 'Infinite Views');
+
 
   } catch (err) {
     console.error('Error:', err);

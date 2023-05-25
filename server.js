@@ -64,6 +64,7 @@ const listDatabases = async client => {
 
 // findOneListingByName() - findOne() 메서드를 호출하여 'name' 필드가 'nameOfListing'과 첫 번째로 일치하는 문서를 검색하여 출력하는 함수
 // 주로 단일 문서를 검색하고 반환하는데 쓰인다.
+
 const findOneListingByName = async (client, nameOfListing) => {
   const result = await client.db('sample_airbnb').collection('listingAndReviews').findOne( {name:nameOfListing} );
 

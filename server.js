@@ -90,24 +90,49 @@ const listDatabases = async client => {
   sort() : 문서의 정렬 순서를 지정한다.
   skip() : 결과에서 일부 문서를 건너뛴다.
 */
-const findListingsByCriteria = async (client, { minBedrooms = 0, minBathrooms = 0, maxResults = Number.MAX_SAFE_INTEGER} ) => {
-  const cursor = client.db('sample_airbnb').collection('listingAndReviews').find({
-    bedrooms: { $gte: minBedrooms },
-    bathrooms: { $gte: minBathrooms },
-    // sort() 메서드를 사용하여 검색 결과를 가장 최근 리뷰를 기준으로 내림차순으로 정렬 
-  }).sort({ last_review: -1 })
+// const findListingsByCriteria = async (client, { minBedrooms = 0, minBathrooms = 0, maxResults = Number.MAX_SAFE_INTEGER} ) => {
+//   const cursor = client.db('sample_airbnb').collection('listingAndReviews').find({
+//     bedrooms: { $gte: minBedrooms },
+//     bathrooms: { $gte: minBathrooms },
+//     // sort() 메서드를 사용하여 검색 결과를 가장 최근 리뷰를 기준으로 내림차순으로 정렬 
+//   }).sort({ last_review: -1 })
 
-  // limit() 메서드를 사용하여 최대 결과 수 제한
-  .limit(maxResults);
+//   // limit() 메서드를 사용하여 최대 결과 수 제한
+//   .limit(maxResults);
 
-  const results = await cursor.toArray();
+//   const results = await cursor.toArray();
 
-  if (results.length > 0) {
-    console.log(`Found listing(s) with at least ${minBedrooms} bedrooms and ${minBathrooms} bathrooms: `);
-    console.log(results);
+//   if (results.length > 0) {
+//     console.log(`Found listing(s) with at least ${minBedrooms} bedrooms and ${minBathrooms} bathrooms: `);
+//     console.log(results);
+//   } else {
+//     console.log(`No listings found with at least ${minBedrooms} bedrooms and ${minBathrooms} bathrooms.`);
+//   };
+// };
+
+// updateListingByName - updateOne() 메서드를 사용하여 해당 문서를 찾고 '$set' 연산자를 사용하여 업데이트 내용을 지정한다.
+// 'matchedCount'는 쿼리 조건과 일치하는 문서의 수를, 'modifiedCount'는 실제로 업데이트 된 문서의 수를 나타낸다.
+// const updateListingByName = async (client, nameOfListing, updateListing) => {
+//   const result = await client.db('sample_airbnb').collection('listingAndReviews')
+//   .updateOne({ name: nameOfListing }, { $set: updateListing });
+
+//   console.log(`${result.matchedCount} document(s) matched the query criteeria`);
+//   console.log(`${result.modifiedCount} document(s) was/were updated`);
+// };
+
+// upsertListingByName - 지정된 이름의 문서를 업데이트하거나 존재하지 않는 경우 새로운 문서로 삽입한다.
+// 'upsert: true' 옵션을 사용하여 새로운 문서를 삽입할 수 있도록 설정한다.
+const upsertListingByName = async (client, nameOfListing, updateListing) => {
+  const result = await client.db('sample_airbnb').collection('listingAndReviews')
+  .updateOne({ name: nameOfListing }, { $set: updateListing }, { upsert: true} );
+
+  console.log(`${result.matchedCount} document(s) matched the query criteeria`)
+
+  if (result.upsertedCount > 0) {
+    console.log(`One document was inserted with the id ${result.upsertedId}`);
   } else {
-    console.log(`No listings found with at least ${minBedrooms} bedrooms and ${minBathrooms} bathrooms.`);
-  };
+    console.log(`${result.modifiedCount} document(s) was/were updated`);
+  }
 };
 
 const run = async () => {
@@ -168,11 +193,15 @@ const run = async () => {
 
     // await findOneListingByName(client, 'Infinite Views');
 
-    await findListingsByCriteria(client, {
-      minBedrooms: 4,
-      minBathrooms: 2,
-      maxResults: 5
-    });
+    // await findListingsByCriteria(client, {
+    //   minBedrooms: 4,
+    //   minBathrooms: 2,
+    //   maxResults: 5
+    // });
+
+    // await updateListingByName(client, 'Infinite Views', { bedrooms: 6, property_type: 'Update', beds: 8 });
+
+    await upsertListingByName(client, 'Rainbow Six Siege', { name: 'Tom Clancy', memo: 'Game', bedrooms: 3, bathrooms: 2 });
 
   } catch (err) {
     console.error('Error:', err);

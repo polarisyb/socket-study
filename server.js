@@ -29,10 +29,19 @@ const client = new MongoClient(uri, {
   }
 });
 
-const createListing = async (client, newListing) => {
-  const result = await client.db('sample_airbnb').collection('listingAndReviews').insertOne(newListing);
+// 단일 문서를 컬렉션에 삽입한다. 한 번에 하나의 문서만 삽입할 수 있다.
+// const createListing = async (client, newListing) => {
+//   const result = await client.db('sample_airbnb').collection('listingAndReviews').insertOne(newListing);
 
-  console.log(`new listing created with the following id: ${result.insertedId}`);
+//   console.log(`new listing created with the following id: ${result.insertedId}`);
+// };
+
+// // 여러 개의 문서를 컬렉션에 삽입한다. 여러 개의 문서를 배열 형태로 전달하여 여러 개의 문서를 삽입할 수 있다.
+const createMultipleListing = async (client, newListings) => {
+  const result = await client.db('sample_airbnb').collection('listingAndReviews').insertMany(newListings);
+
+  console.log(`${result.insertedCount} new listings created with the following id(s):`);
+  console.log(result.insertedIds);
 };
 
 const listDatabases = async client => {
@@ -66,15 +75,48 @@ const run = async () => {
     await coll.createIndex({ name: 1 }, { unique: true });
     const options = { ordered: false };
 
-    await createListing(client, {
-      name: 'Kevin',
-      memo: 'Hello MongoDB',
-      bedrooms: 1,
-      bathrooms: 1
-    });
+    // insertOne();
+    // await createListing(client, {
+    //   name: 'Tom House',
+    //   memo: 'Ah..Jerry?',
+    //   propert_type: 'House',
+    //   bedrooms: 2,
+    //   bathrooms: 1
+    // });
 
-    const insertOneResult = await coll.insertOne(createListing, options);
-    console.log(insertOneResult.insertedId);
+    // const insertOneResult = await coll.insertOne(createListing, options);
+    // console.log(insertOneResult.insertedId);
+
+
+    // insertMany();
+    await createMultipleListing(client, [
+      {
+        name: 'Infinite Views',
+        memo: 'Really? Infinity?',
+        property_type: 'House',
+        bedrooms: 5,
+        bathrooms: 4.5,
+        beds: 5
+      },
+      {
+        name: 'Private room in Space',
+        memo: 'Space? what??',
+        property_type: 'Space',
+        bedrooms: 1,
+        bathrooms: 1
+      },
+      {
+        name: 'Beautiful Beach House',
+        memo: 'Enjoy',
+        bedrooms: 4,
+        bathrooms: 2.5,
+        beds: 7,
+        last_review: new Date()
+      },
+    ]);
+    
+    const insertManyResult = await coll.insertMany(createMultipleListing, options);
+    console.log(insertManyResult.insertedIds);
 
     await listDatabases(client);
 

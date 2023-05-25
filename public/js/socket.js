@@ -23,7 +23,10 @@ const socketId = idList => {
     listData.innerText = data;
     idList.appendChild(listData);
     console.log(data);
+    socket.emit('sendId', data );
   });
+
 };
+
 
 export { initializeSocket, socketId };

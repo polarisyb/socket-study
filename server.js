@@ -29,6 +29,12 @@ const client = new MongoClient(uri, {
   }
 });
 
+const createListing = async (client, newListing) => {
+  const result = await client.db('sample_airbnb').collection('listingAndReviews').insertOne(newListing);
+
+  console.log(`new listing created with the following id: ${result.insertedId}`);
+};
+
 const listDatabases = async client => {
   // db() MongoClient 객체에서 현재 연결된 데이터베이스에 대한 레퍼런스를 가져오는 메서드
   // MongoDB 데이터베이스와 상호작용하는 데 사용된다.
@@ -54,9 +60,23 @@ const run = async () => {
     await client.db('admin').command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
+    const db = client.db("sample_airbnb");
+    const coll = db.collection("listingAndReviews");
+
+    await coll.createIndex({ name: 1 }, { unique: true });
+    const options = { ordered: false };
+
+    await createListing(client, {
+      name: 'Kevin',
+      memo: 'Hello MongoDB',
+      bedrooms: 1,
+      bathrooms: 1
+    });
+
+    const insertOneResult = await coll.insertOne(createListing, options);
+    console.log(insertOneResult.insertedId);
+
     await listDatabases(client);
-    
-    console.log('Data sent to clients');
 
   } catch (err) {
     console.error('Error:', err);

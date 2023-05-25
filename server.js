@@ -69,10 +69,12 @@ const run = async () => {
     // updateDoc 객체는 업데이트할 내용을 지정한다.
     // $mul 연산자를 사용하여 'radius' 필드를 1.0204 를 곱셈하는 연산을 수행하고 있다.
     // 이렇게 지정한 업데이트 연산은 선택된 모든 문서에 대해 적용된다.
+    // { $ml : { <field1> : <number1>, ....} }
     const updateDoc = {
-      $mul: {
-        radius: 1.0204,
-      },
+      $rename:
+        {
+          'mess':'test', 
+        }
     };
 
     // updateMany 메서드는 업데이트 된 문서의 수를 나타내는 'result.modifiedCount' 를 반환한다.

@@ -9,15 +9,8 @@ const io = require('socket.io')(server);
 const PORT = process.env.PORT || 8000;
 require('dotenv').config();
 
-/* message, user 모듈 */
-const formatMessage = require('./utils/messages');
-const {
-  userJoin,
-  getCurrentUser,
-  userLeave,
-  getRoomUsers
-} = require('./utils/users');
-
+/* socketEvents 모듈 */
+const { handleChatMessage, handleJoinRoom, handleDisconnect } = require('./socket/socketEvents');
 
 /* db 모듈 */
 
@@ -75,7 +68,7 @@ const run = async (socket, client) => {
         await coll.insertOne(message);
         console.log('Message inserted into MongoDB');
 
-        io.to(user.room).emit('message', formatMessage(user.username, msg));
+        io.to(user.room).emit('message', formatMessage(user.username, msg, socket.handshake.time));
 
       } catch (err) {
         console.error('Error inserting message:', err);
@@ -91,55 +84,14 @@ const run = async (socket, client) => {
 
 // connection 이 수립되면 event handler function의 인자로 socket이 들어온다.
 io.on('connection', socket => {
-  // socket 에서 송수신되는 모든 이벤트에 대한 리스너를 설정한다.
-  // 이벤트 이름을 명시적으로 지정하지 않고 모든 이벤트를 수신할 수 있는 특별한 메서드
   run(socket, client).catch(console.dir);
 
   socket.onAny( e => {
     console.log(`Socket Event: ${e}`);
   });
 
-  // 클라이언트가 Room에 접속했을 때
-  socket.on('joinRoom', ({ username, room }) => {
-    const user = userJoin(socket.id, username, room);
-
-    socket.join(user.room);
-
-    socket.emit('message', formatMessage(botName, "Welcome to ChatCord!"));
-
-    // 클라이언트가 room에 입장했을 때 broadcast 방식으로 이벤트 송신
-    socket.broadcast
-      .to(user.room)
-      .emit(
-        'message',
-        formatMessage(botName, `${user.username} has joined the chat`)
-      );
-
-    // 클라이언트가 room에 입장했을 때 입장한 room에 'roomUsers' 이벤트 송신
-    io.to(user.room).emit('roomUsers', {
-      room: user.room,
-      users: getRoomUsers(user.room)
-    });
-  });
-  
-  // 클라이언트가 연결이 끊어졌을 때 실행
-  // 소켓 연결이 끊긴 사용자를 식별하고, 해당 사용자가 속한 채팅방에 메시지를 전송, 사용자 목록 업데이트
-  socket.on('disconnect', () => {
-
-    const user = userLeave(socket.id);
-
-    if (user) {
-      io.to(user.room).emit('message', formatMessage(botName, `${user.username} has left the chat`));
-    
-      io.to(user.room).emit('roomUsers', {
-        room: user.room,
-        users: getRoomUsers(user.room)
-      });
-
-      console.log(`${user.username} has left the ${user.room}`);
-    };
-
-  });
+  handleJoinRoom(socket);
+  handleDisconnect(socket);
 });
 
 server.listen(PORT, err => { 

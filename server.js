@@ -112,28 +112,28 @@ const listDatabases = async client => {
 
 // updateListingByName - updateOne() 메서드를 사용하여 해당 문서를 찾고 '$set' 연산자를 사용하여 업데이트 내용을 지정한다.
 // 'matchedCount'는 쿼리 조건과 일치하는 문서의 수를, 'modifiedCount'는 실제로 업데이트 된 문서의 수를 나타낸다.
-// const updateListingByName = async (client, nameOfListing, updateListing) => {
-//   const result = await client.db('sample_airbnb').collection('listingAndReviews')
-//   .updateOne({ name: nameOfListing }, { $set: updateListing });
+const updateListingByName = async (client, nameOfListing, updateListing) => {
+  const result = await client.db('sample_airbnb').collection('listingAndReviews')
+  .updateOne({ name: nameOfListing }, { $set: updateListing });
 
-//   console.log(`${result.matchedCount} document(s) matched the query criteeria`);
-//   console.log(`${result.modifiedCount} document(s) was/were updated`);
-// };
+  console.log(`${result.matchedCount} document(s) matched the query criteeria`);
+  console.log(`${result.modifiedCount} document(s) was/were updated`);
+};
 
 // upsertListingByName - 지정된 이름의 문서를 업데이트하거나 존재하지 않는 경우 새로운 문서로 삽입한다.
 // 'upsert: true' 옵션을 사용하여 새로운 문서를 삽입할 수 있도록 설정한다.
-const upsertListingByName = async (client, nameOfListing, updateListing) => {
-  const result = await client.db('sample_airbnb').collection('listingAndReviews')
-  .updateOne({ name: nameOfListing }, { $set: updateListing }, { upsert: true} );
+// const upsertListingByName = async (client, nameOfListing, updateListing) => {
+//   const result = await client.db('sample_airbnb').collection('listingAndReviews')
+//   .updateOne({ name: nameOfListing }, { $set: updateListing }, { upsert: true} );
 
-  console.log(`${result.matchedCount} document(s) matched the query criteeria`)
+//   console.log(`${result.matchedCount} document(s) matched the query criteeria`)
 
-  if (result.upsertedCount > 0) {
-    console.log(`One document was inserted with the id ${result.upsertedId}`);
-  } else {
-    console.log(`${result.modifiedCount} document(s) was/were updated`);
-  }
-};
+//   if (result.upsertedCount > 0) {
+//     console.log(`One document was inserted with the id ${result.upsertedId}`);
+//   } else {
+//     console.log(`${result.modifiedCount} document(s) was/were updated`);
+//   }
+// };
 
 const run = async () => {
   try {
@@ -199,9 +199,9 @@ const run = async () => {
     //   maxResults: 5
     // });
 
-    // await updateListingByName(client, 'Infinite Views', { bedrooms: 6, property_type: 'Update', beds: 8 });
+    await updateListingByName(client, 'Tom Clancy', { bedrooms: 6, property_type: 'Steam', beds: 8 });
 
-    await upsertListingByName(client, 'Rainbow Six Siege', { name: 'Tom Clancy', memo: 'Game', bedrooms: 3, bathrooms: 2 });
+    // await upsertListingByName(client, 'Rainbow Six Siege', { name: 'Tom Clancy', memo: 'Game', bedrooms: 1, bathrooms: 2 });
 
   } catch (err) {
     console.error('Error:', err);

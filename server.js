@@ -9,20 +9,19 @@ const io = require('socket.io')(server);
 const PORT = process.env.PORT || 8000;
 require('dotenv').config();
 
+const formatMessage = require('./utils/messages');
+const { getCurrentUser } = require('./utils/users');
+
 /* socketEvents 모듈 */
-const { handleChatMessage, handleJoinRoom, handleDisconnect } = require('./socket/socketEvents');
+const socketEvents = require('./socket/socketEvents');
 
 /* db 모듈 */
-
 // uri 유효성 검사
 const validateMongoDBUri = require('./db/UriVaildator');
 
 // 새로운 db와 컬렉션 생성
 // const createCollection = require('./db/createCollection');
 const listDatabases = require('./db/listDatabases');
-
-// ChatApp 시스템 이름을 변수에 할당 (단순하게 시스템 메세지 보내는 용도)
-const botName = 'ChatApp bot';
 
 // app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -70,6 +69,8 @@ const run = async (socket, client) => {
 
         io.to(user.room).emit('message', formatMessage(user.username, msg, socket.handshake.time));
 
+        socketEvents.handleChatMessage(socket, io, coll);
+
       } catch (err) {
         console.error('Error inserting message:', err);
       }
@@ -90,8 +91,8 @@ io.on('connection', socket => {
     console.log(`Socket Event: ${e}`);
   });
 
-  handleJoinRoom(socket);
-  handleDisconnect(socket);
+  socketEvents.handleJoinRoom(socket, io);
+  socketEvents.handleDisconnect(socket, io);
 });
 
 server.listen(PORT, err => { 

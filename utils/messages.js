@@ -4,13 +4,11 @@
     time - 현재 시간
 */
 
-const moment = require('moment');
-
-const formatMessage = (username, text) => {
+const formatMessage = (username, text, time) => {
     return {
         username,
         text,
-        time: moment().format('h:mm') 
+        time
     };
 };
 

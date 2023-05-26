@@ -90,8 +90,9 @@ const listDatabases = async client => {
   sort() : 문서의 정렬 순서를 지정한다.
   skip() : 결과에서 일부 문서를 건너뛴다.
 */
-// const findListingsByCriteria = async (client, { minBedrooms = 0, minBathrooms = 0, maxResults = Number.MAX_SAFE_INTEGER} ) => {
+// const findListingsByCriteria = async (client, { property_type, minBedrooms = 0, minBathrooms = 0, maxResults = Number.MAX_SAFE_INTEGER} ) => {
 //   const cursor = client.db('sample_airbnb').collection('listingAndReviews').find({
+//     property_type: 'Unknown',
 //     bedrooms: { $gte: minBedrooms },
 //     bathrooms: { $gte: minBathrooms },
 //     // sort() 메서드를 사용하여 검색 결과를 가장 최근 리뷰를 기준으로 내림차순으로 정렬 
@@ -105,6 +106,7 @@ const listDatabases = async client => {
 //   if (results.length > 0) {
 //     console.log(`Found listing(s) with at least ${minBedrooms} bedrooms and ${minBathrooms} bathrooms: `);
 //     console.log(results);
+//     console.log( `Found ${results.length} listing(s)`);
 //   } else {
 //     console.log(`No listings found with at least ${minBedrooms} bedrooms and ${minBathrooms} bathrooms.`);
 //   };
@@ -112,13 +114,13 @@ const listDatabases = async client => {
 
 // updateListingByName - updateOne() 메서드를 사용하여 해당 문서를 찾고 '$set' 연산자를 사용하여 업데이트 내용을 지정한다.
 // 'matchedCount'는 쿼리 조건과 일치하는 문서의 수를, 'modifiedCount'는 실제로 업데이트 된 문서의 수를 나타낸다.
-const updateListingByName = async (client, nameOfListing, updateListing) => {
-  const result = await client.db('sample_airbnb').collection('listingAndReviews')
-  .updateOne({ name: nameOfListing }, { $set: updateListing });
+// const updateListingByName = async (client, nameOfListing, updateListing) => {
+//   const result = await client.db('sample_airbnb').collection('listingAndReviews')
+//   .updateOne({ name: nameOfListing }, { $set: updateListing }, { $set: { property_type: 'Unknown' } });
 
-  console.log(`${result.matchedCount} document(s) matched the query criteeria`);
-  console.log(`${result.modifiedCount} document(s) was/were updated`);
-};
+//   console.log(`${result.matchedCount} document(s) matched the query criteeria`);
+//   console.log(`${result.modifiedCount} document(s) was/were updated`);
+// };
 
 // upsertListingByName - 지정된 이름의 문서를 업데이트하거나 존재하지 않는 경우 새로운 문서로 삽입한다.
 // 'upsert: true' 옵션을 사용하여 새로운 문서를 삽입할 수 있도록 설정한다.
@@ -134,6 +136,19 @@ const updateListingByName = async (client, nameOfListing, updateListing) => {
 //     console.log(`${result.modifiedCount} document(s) was/were updated`);
 //   }
 // };
+
+// updateAllListingsPropsType - updateMany() 메서드를 사용하여 특정 필드가 존재, 존재하지 않는 문서를 찾고 '$set' 연산자를 사용하여
+// 해당 문서의 property_type 을 지정한 값으로 설정한다.
+// 첫 번째 인자로 지정한 쿼리 조건은 문서가 만족해야 하는 조건을 나타낸다.
+// 두 번째 인자로 지정한 업데이트 연산자는 해당 조건을 만족하는 문서들에게 적용된다.
+const updateAllListingsPropsType = async (client) => {
+  const result = await client.db('sample_airbnb').collection('listingAndReviews')
+  .updateMany({ property_type: { $exists: true }, monami: { $exists: true }, card: { $exists: true }  },
+    { $set: { property_type: 'Hello Props!', monami: 'Ball pen', card: 'ShinHan, NH' } });
+
+    console.log(`${result.matchedCount} document(s) matched the query criteria`);
+    console.log(`${result.modifiedCount} document(s) was/were updated`);
+};
 
 const run = async () => {
   try {
@@ -194,14 +209,17 @@ const run = async () => {
     // await findOneListingByName(client, 'Infinite Views');
 
     // await findListingsByCriteria(client, {
-    //   minBedrooms: 4,
-    //   minBathrooms: 2,
-    //   maxResults: 5
+    //   property_type: 'Unknown',
+    //   minBedrooms: 1,
+    //   minBathrooms: 1,
+    //   maxResults: 7
     // });
 
-    await updateListingByName(client, 'Tom Clancy', { bedrooms: 6, property_type: 'Steam', beds: 8 });
+    // await updateListingByName(client, 'Tom Clancy', { bedrooms: 2, property_type: 'Steam', beds: 2, property_type: 'Unknown' });
 
     // await upsertListingByName(client, 'Rainbow Six Siege', { name: 'Tom Clancy', memo: 'Game', bedrooms: 1, bathrooms: 2 });
+
+    await updateAllListingsPropsType(client);
 
   } catch (err) {
     console.error('Error:', err);

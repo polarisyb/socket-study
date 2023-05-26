@@ -160,8 +160,8 @@ const listDatabases = async client => {
 
 // deleteListingByName - deleteOne() 메서드를 사용하여 지정된 쿼리 조건과 일치하는 첫 번째 문서만 삭제한다.
 // 즉, 해당 쿼리 조건과 일치하는 문서 중 가장 먼저 발견되는 문서 하나만 삭제된다.
-const deleteListingByName = async (client, nameOfListing) => {
-  const result = await client.db('sample_airbnb').collection('listingAndReviews').deleteOne({ name: nameOfListing });
+const deleteListingByName = async (client, memo) => {
+  const result = await client.db('sample_airbnb').collection('listingAndReviews').deleteOne({ memo: memo });
 
   console.log(`${result.deletedCount} document(s) was/were deleted`);
 };
@@ -237,7 +237,7 @@ const run = async () => {
 
     // await updateAllListingsPropsType(client);
 
-    await deleteListingByName(client, 'Cozy Cottage');
+    await deleteListingByName(client, 'Game');
 
   } catch (err) {
     console.error('Error:', err);

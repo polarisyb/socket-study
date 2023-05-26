@@ -7,6 +7,8 @@ const io = require('socket.io')(server);
 // const { Server } = require('socket.io');
 // const io = new Server(server);
 const PORT = process.env.PORT || 8000;
+
+/* message, user 모듈 */
 const formatMessage = require('./utils/messages');
 const {
   userJoin,
@@ -15,7 +17,10 @@ const {
   getRoomUsers
 } = require('./utils/users');
 
-const createCollection = require('./db/createCollection');
+/* db 모듈 */
+
+// 새로운 db와 컬렉션 생성
+// const createCollection = require('./db/createCollection');
 
 // ChatApp 시스템 이름을 변수에 할당 (단순하게 시스템 메세지 보내는 용도)
 const botName = 'ChatApp bot';
@@ -23,6 +28,7 @@ const botName = 'ChatApp bot';
 // app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+/* mongoDB 연결 */
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://polaris:gpffov8d@crud.sogjbgj.mongodb.net/";
 
@@ -64,13 +70,13 @@ const run = async () => {
     await client.db('admin').command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-    const db = client.db("Chat-app");
-    const collectionName = "user";
+    const db = client.db('Chat-app');
+    const coll = db.collection('user');
 
-    await createCollection(db, collectionName);
+    // await createCollection(db, collectionName);
 
-    // await coll.createIndex({ name: 1 }, { unique: true });
-    // const options = { ordered: false };
+    await coll.createIndex({ name: 1 }, { unique: true });
+    const options = { ordered: false };
 
     await listDatabases(client);
 
@@ -85,60 +91,60 @@ const run = async () => {
 }
 run().catch(console.dir);
 
-// // connection 이 수립되면 event handler function의 인자로 socket이 들어온다.
-// io.on('connection', socket => {
-//   // socket 에서 송수신되는 모든 이벤트에 대한 리스너를 설정한다.
-//   // 이벤트 이름을 명시적으로 지정하지 않고 모든 이벤트를 수신할 수 있는 특별한 메서드
-//   socket.onAny( e => {
-//     console.log(`Socket Event: ${e}`);
-//   });
+// connection 이 수립되면 event handler function의 인자로 socket이 들어온다.
+io.on('connection', socket => {
+  // socket 에서 송수신되는 모든 이벤트에 대한 리스너를 설정한다.
+  // 이벤트 이름을 명시적으로 지정하지 않고 모든 이벤트를 수신할 수 있는 특별한 메서드
+  socket.onAny( e => {
+    console.log(`Socket Event: ${e}`);
+  });
 
-//   // 클라이언트가 Room에 접속했을 때
-//   socket.on('joinRoom', ({ username, room }) => {
-//     const user = userJoin(socket.id, username, room);
+  // 클라이언트가 Room에 접속했을 때
+  socket.on('joinRoom', ({ username, room }) => {
+    const user = userJoin(socket.id, username, room);
 
-//     socket.join(user.room);
+    socket.join(user.room);
 
-//     socket.emit('message', formatMessage(botName, "Welcome to ChatCord!"));
+    socket.emit('message', formatMessage(botName, "Welcome to ChatCord!"));
 
-//     // 클라이언트가 room에 입장했을 때 broadcast 방식으로 이벤트 송신
-//     socket.broadcast
-//       .to(user.room)
-//       .emit(
-//         'message',
-//         formatMessage(botName, `${user.username} has joined the chat`)
-//       );
+    // 클라이언트가 room에 입장했을 때 broadcast 방식으로 이벤트 송신
+    socket.broadcast
+      .to(user.room)
+      .emit(
+        'message',
+        formatMessage(botName, `${user.username} has joined the chat`)
+      );
 
-//     // 클라이언트가 room에 입장했을 때 입장한 room에 'roomUsers' 이벤트 송신
-//     io.to(user.room).emit('roomUsers', {
-//       room: user.room,
-//       users: getRoomUsers(user.room)
-//     });
-//   });
+    // 클라이언트가 room에 입장했을 때 입장한 room에 'roomUsers' 이벤트 송신
+    io.to(user.room).emit('roomUsers', {
+      room: user.room,
+      users: getRoomUsers(user.room)
+    });
+  });
 
-//   // chatMessage 이벤트 수신
-//   socket.on('chatMessage', msg => {
-//     const user = getCurrentUser(socket.id);
+  // chatMessage 이벤트 수신
+  socket.on('chatMessage', msg => {
+    const user = getCurrentUser(socket.id);
 
-//     io.to(user.room).emit('message', formatMessage(user.username, msg));
-//   });
+    io.to(user.room).emit('message', formatMessage(user.username, msg));
+  });
   
-//   // 클라이언트가 연결이 끊어졌을 때 실행
-//   // 소켓 연결이 끊긴 사용자를 식별하고, 해당 사용자가 속한 채팅방에 메시지를 전송, 사용자 목록 업데이트
-//   socket.on('disconnect', () => {
-//     const user = userLeave(socket.id);
+  // 클라이언트가 연결이 끊어졌을 때 실행
+  // 소켓 연결이 끊긴 사용자를 식별하고, 해당 사용자가 속한 채팅방에 메시지를 전송, 사용자 목록 업데이트
+  socket.on('disconnect', () => {
+    const user = userLeave(socket.id);
 
-//     if (user) {
-//       io.to(user.room).emit('message', formatMessage(botName, `${user.username} has left the chat`));
+    if (user) {
+      io.to(user.room).emit('message', formatMessage(botName, `${user.username} has left the chat`));
     
-//       io.to(user.room).emit('roomUsers', {
-//         room: user.room,
-//         users: getRoomUsers(user.room)
-//       });
-//     };
+      io.to(user.room).emit('roomUsers', {
+        room: user.room,
+        users: getRoomUsers(user.room)
+      });
+    };
 
-//   });
-// });
+  });
+});
 
 server.listen(PORT, err => { 
   if (err) throw err;

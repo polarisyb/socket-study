@@ -139,12 +139,20 @@ const listDatabases = async client => {
 
 // updateAllListingsPropsType - updateMany() 메서드를 사용하여 특정 필드가 존재, 존재하지 않는 문서를 찾고 '$set' 연산자를 사용하여
 // 해당 문서의 property_type 을 지정한 값으로 설정한다.
-// 첫 번째 인자로 지정한 쿼리 조건은 문서가 만족해야 하는 조건을 나타낸다.
+// 첫 번째 인자로 지정한 쿼리 조건은 문서가 만족해야 하는 조건을 나타낸다. 빈 객체로 전달할 경우 필드의 존재 여부에 상관없이 모든 문서에 대해 수정이 이루어진다.
 // 두 번째 인자로 지정한 업데이트 연산자는 해당 조건을 만족하는 문서들에게 적용된다.
 const updateAllListingsPropsType = async (client) => {
   const result = await client.db('sample_airbnb').collection('listingAndReviews')
-  .updateMany({ property_type: { $exists: true }, monami: { $exists: true }, card: { $exists: true }  },
-    { $set: { property_type: 'Hello Props!', monami: 'Ball pen', card: 'ShinHan, NH' } });
+  .updateMany({},
+    {
+      $set: {
+        property_type: 'Hello Props!',
+        monami: 'Ball pen',
+        card: 'ShinHan, NH',
+        food: 'Pizza',
+      },
+    }
+    );
 
     console.log(`${result.matchedCount} document(s) matched the query criteria`);
     console.log(`${result.modifiedCount} document(s) was/were updated`);

@@ -141,21 +141,29 @@ const listDatabases = async client => {
 // 해당 문서의 property_type 을 지정한 값으로 설정한다.
 // 첫 번째 인자로 지정한 쿼리 조건은 문서가 만족해야 하는 조건을 나타낸다. 빈 객체로 전달할 경우 필드의 존재 여부에 상관없이 모든 문서에 대해 수정이 이루어진다.
 // 두 번째 인자로 지정한 업데이트 연산자는 해당 조건을 만족하는 문서들에게 적용된다.
-const updateAllListingsPropsType = async (client) => {
-  const result = await client.db('sample_airbnb').collection('listingAndReviews')
-  .updateMany({},
-    {
-      $set: {
-        property_type: 'Hello Props!',
-        monami: 'Ball pen',
-        card: 'ShinHan, NH',
-        food: 'Pizza',
-      },
-    }
-    );
+// const updateAllListingsPropsType = async (client) => {
+//   const result = await client.db('sample_airbnb').collection('listingAndReviews')
+//   .updateMany({},
+//     {
+//       $set: {
+//         property_type: 'Hello Props!',
+//         monami: 'Ball pen',
+//         card: 'ShinHan, NH',
+//         food: 'Pizza',
+//       },
+//     }
+//     );
 
-    console.log(`${result.matchedCount} document(s) matched the query criteria`);
-    console.log(`${result.modifiedCount} document(s) was/were updated`);
+//     console.log(`${result.matchedCount} document(s) matched the query criteria`);
+//     console.log(`${result.modifiedCount} document(s) was/were updated`);
+// };
+
+// deleteListingByName - deleteOne() 메서드를 사용하여 지정된 쿼리 조건과 일치하는 첫 번째 문서만 삭제한다.
+// 즉, 해당 쿼리 조건과 일치하는 문서 중 가장 먼저 발견되는 문서 하나만 삭제된다.
+const deleteListingByName = async (client, nameOfListing) => {
+  const result = await client.db('sample_airbnb').collection('listingAndReviews').deleteOne({ name: nameOfListing });
+
+  console.log(`${result.deletedCount} document(s) was/were deleted`);
 };
 
 const run = async () => {
@@ -227,7 +235,9 @@ const run = async () => {
 
     // await upsertListingByName(client, 'Rainbow Six Siege', { name: 'Tom Clancy', memo: 'Game', bedrooms: 1, bathrooms: 2 });
 
-    await updateAllListingsPropsType(client);
+    // await updateAllListingsPropsType(client);
+
+    await deleteListingByName(client, 'Cozy Cottage');
 
   } catch (err) {
     console.error('Error:', err);

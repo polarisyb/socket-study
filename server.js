@@ -116,7 +116,7 @@ const listDatabases = async client => {
 // 'matchedCount'는 쿼리 조건과 일치하는 문서의 수를, 'modifiedCount'는 실제로 업데이트 된 문서의 수를 나타낸다.
 // const updateListingByName = async (client, nameOfListing, updateListing) => {
 //   const result = await client.db('sample_airbnb').collection('listingAndReviews')
-//   .updateOne({ name: nameOfListing }, { $set: updateListing }, { $set: { property_type: 'Unknown' } });
+//   .updateOne({ name: nameOfListing }, { $set: updateListing }, { $set: { last_review: new Date(2019, 4, 22, 21, 23, 16) } });
 
 //   console.log(`${result.matchedCount} document(s) matched the query criteeria`);
 //   console.log(`${result.modifiedCount} document(s) was/were updated`);
@@ -141,19 +141,19 @@ const listDatabases = async client => {
 // 해당 문서의 필드 값을 지정한 값으로 설정한다.
 // 첫 번째 인자로 지정한 쿼리 조건은 문서가 만족해야 하는 조건을 나타낸다. 빈 객체로 전달할 경우 필드의 존재 여부에 상관없이 모든 문서에 대해 수정이 이루어진다.
 // 두 번째 인자로 지정한 업데이트 연산자는 해당 조건을 만족하는 문서들에게 적용된다.
-const updateAllListingsPropsType = async (client) => {
-  const result = await client.db('sample_airbnb').collection('listingAndReviews')
-  .updateMany({},
-    {
-      $set: {
-        last_scraped: new Date(2023, 4, 24, 11, 30)
-      },
-    }
-    );
+// const updateAllListingsPropsType = async (client) => {
+//   const result = await client.db('sample_airbnb').collection('listingAndReviews')
+//   .updateMany({},
+//     {
+//       $set: {
+//         last_scraped: new Date(2023, 4, 24, 11, 30)
+//       },
+//     }
+//     );
 
-    console.log(`${result.matchedCount} document(s) matched the query criteria`);
-    console.log(`${result.modifiedCount} document(s) was/were updated`);
-};
+//     console.log(`${result.matchedCount} document(s) matched the query criteria`);
+//     console.log(`${result.modifiedCount} document(s) was/were updated`);
+// };
 
 // deleteListingByName - deleteOne() 메서드를 사용하여 지정된 쿼리 조건과 일치하는 첫 번째 문서만 삭제한다.
 // 즉, 해당 쿼리 조건과 일치하는 문서 중 가장 먼저 발견되는 문서 하나만 삭제된다.
@@ -168,12 +168,12 @@ const updateAllListingsPropsType = async (client) => {
 // '$lt' 연산자는 '작다'라는 조건을 나타내는 Less Than을 의미한다.
 // 이 연산자는 필드의 값이 특정 값보다 작은지 여부를 확인하는데 사용된다.
 // ex) { field: { $lt: value } } 와 같은 형태로 사용할 수 있으며, 'field' 필드의 값이 'value' 보다 작은 문서들을 선택하게 된다.
-const deleteListingsScrapedBeforeDate = async (client, date) => {
-  const result = await client.db('sample_airbnb').collection('listingAndReviews')
-  .deleteMany({ 'last_scraped': { $lt: date} });
+// const deleteListingsScrapedBeforeDate = async (client, date) => {
+//   const result = await client.db('sample_airbnb').collection('listingAndReviews')
+//   .deleteMany({ 'last_scraped': { $lt: date} });
 
-  console.log(`${result.deletedCount} document(s) was/were deleted`);
-};
+//   console.log(`${result.deletedCount} document(s) was/were deleted`);
+// };
 
 const run = async () => {
   try {
@@ -183,11 +183,11 @@ const run = async () => {
     await client.db('admin').command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-    // const db = client.db("sample_airbnb");
-    // const coll = db.collection("listingAndReviews");
+    const db = client.db("sample_airbnb");
+    const coll = db.collection("listingAndReviews");
 
-    // await coll.createIndex({ name: 1 }, { unique: true });
-    // const options = { ordered: false };
+    await coll.createIndex({ name: 1 }, { unique: true });
+    const options = { ordered: false };
 
     // insertOne();
     // await createListing(client, {
@@ -223,7 +223,31 @@ const run = async () => {
     //     bedrooms: 4,
     //     bathrooms: 2.5,
     //     beds: 7,
-    //     last_review: new Date()
+    //     last_review: new Date(2019, 4, 22, 21, 23, 16)
+    //   },
+    //   {
+    //     name: 'Tom Clancy',
+    //     memo: 'Game',
+    //     bedrooms: 1,
+    //     bathrooms: 1,
+    //     beds: 2,
+    //     last_review: new Date(2021, 3, 12, 3, 17, 25)
+    //   },
+    //   {
+    //     name: 'Tom House',
+    //     memo: 'Jerry?',
+    //     property_type: 'House',
+    //     bedrooms: 2,
+    //     bathrooms: 1.5,
+    //     beds: 5
+    //   },
+    //   {
+    //     name: 'Polaris',
+    //     memo: 'Galaxy',
+    //     property_type: 'Space',
+    //     bedrooms: 4,
+    //     bathrooms: 3,
+    //     beds: 2
     //   },
     // ]);
     // const insertManyResult = await coll.insertMany(createMultipleListing, options);
@@ -240,15 +264,15 @@ const run = async () => {
     //   maxResults: 7
     // });
 
-    // await updateListingByName(client, 'Tom Clancy', { bedrooms: 2, property_type: 'Steam', beds: 2, property_type: 'Unknown' });
+    // await updateListingByName(client, 'Beautiful Beach House', { last_review: new Date(2019, 4, 22, 21, 23, 16)});
 
-    // await upsertListingByName(client, 'Rainbow Six Siege', { name: 'Tom Clancy', memo: 'Game', bedrooms: 1, bathrooms: 2 });
+    // await upsertListingByName(client, 'Tom Clan', { name: 'Rainbow Six Siege', property_type: 'FPS', memo: 'Game', bedrooms: 1, bathrooms: 2 });
 
-    await updateAllListingsPropsType(client);
+    // await updateAllListingsPropsType(client);
 
     // await deleteListingByName(client, 'Game');
 
-    await deleteListingsScrapedBeforeDate(client, new Date('2023-05-26'));
+    // await deleteListingsScrapedBeforeDate(client, new Date('2023-05-26'));
 
   } catch (err) {
     console.error('Error:', err);

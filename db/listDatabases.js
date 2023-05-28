@@ -10,6 +10,7 @@ const listDatabases = async client => {
   // listDatabases() 데이터베이스 관리자 객체('admin') 에서 데이터베이스 목록을 가져오는 메서드
   // 현재 MongoDB 서버에 있는 모든 데이터베이스의 목록을 가져올 수 있다.
   // 배열 형태로 실제 데이터베이스 목록을 담고 있다.
+
   console.log('Databases: ');
   databasesList.databases.forEach(db => {
     console.log(`- ${db.name}`);

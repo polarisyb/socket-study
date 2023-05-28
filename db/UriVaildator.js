@@ -1,3 +1,7 @@
+/** 
+ * mongoDB uri validation
+ * @param {string} uri mongoDB uri
+*/
 const validateMongoDBUri = (uri) => {
   if (!uri || !uri.startsWith('mongodb')) {
     throw new Error('Invalid MongoDB URI specified');

@@ -71,6 +71,10 @@ io.on('connection', socket => {
   socketEvents.handleChatMessage(socket, io, coll);
   socketEvents.handleJoinRoom(socket, io);
   socketEvents.handleDisconnect(socket, io);
+
+  socket.on('disconnect', () => {
+    console.log(`${socket.id} is disconnected`);
+  });
 });
 
 server.listen(PORT, err => { 

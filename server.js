@@ -49,15 +49,15 @@ const run = async () => {
     await client.db('admin').command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-    await client.db('adapter').createCollection('socket.io-adapter-events', {
-      capped: true,
-      size: 1e6
-    });
+    // await client.db('adapter').createCollection('socket.io-adapter-events', {
+    //   capped: true,
+    //   size: 1e6
+    // });
 
     await listDatabases(client);
 
-    const mongoCollection = client.db('adapter').collection('socket.io-adapter-events');
-    io.adapter(createAdapter(mongoCollection));
+    // const mongoCollection = client.db('adapter').collection('socket.io-adapter-events');
+    // io.adapter(createAdapter(mongoCollection));
 
     // deleteRoomMessage(client, 'JavaScript');
 
